@@ -9,29 +9,51 @@ import * as echarts from 'echarts';
 export class AppComponent implements OnInit {
   name = 'Angular';
 
-  private myChart: any = null;
   private barchart: any = null;
 
   ngOnInit() {
-    this.InitDonut();
     this.InitStackedBar();
   }
 
   private InitStackedBar(): void {
     this.barchart = echarts.init(document.getElementById('barchart') as any);
     const option = {
-      tooltip: {
-        trigger: 'axis',
-        show: false,
-      },
       legend: {
         show: false,
       },
+      tooltip: {
+        trigger: 'axis',
+        show: true,
+        position: function (point, params, dom, rect, size) {
+          return [point[0], '60%'];
+        },
+        backgroundColor: '#000000',
+        formatter: function (params) {
+          var colorSpan = (color) =>
+            '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' +
+            color +
+            '"></span>';
+          let rez = '<p>' + params[0].axisValue + '</p>';
+          console.log(params); //quite useful for debug÷
+          params.forEach((item) => {
+            //console.log(item); //quite useful for debug
+            var xx =
+              '<p>' +
+              colorSpan(item.color) +
+              ' ' +
+              item.seriesName +
+              ': ' +
+              item.data +
+              '%' +
+              '</p>';
+            rez += xx;
+          });
+
+          return rez;
+        },
+      },
       grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true,
+        left: '1%',
       },
       xAxis: {
         type: 'value',
@@ -40,28 +62,27 @@ export class AppComponent implements OnInit {
       yAxis: {
         type: 'category',
         show: false,
-        data: ['Mon'],
       },
       series: [
         {
-          name: 'Direct',
+          name: 'Last week',
           type: 'bar',
           stack: 'total',
-          barWidth: 10,
 
           label: {
             show: false,
           },
           itemStyle: {
             borderRadius: 10,
+            color: '#5188f5',
+            shadowColor: '#5188f5',
+            shadowOffsetX: 5,
           },
-          emphasis: {
-            focus: 'series',
-          },
+          emphasis: {},
           data: [320],
         },
         {
-          name: 'Mail Ad',
+          name: 'Last 2 weeks',
           type: 'bar',
           stack: 'total',
           barWidth: 10,
@@ -70,14 +91,15 @@ export class AppComponent implements OnInit {
           },
           itemStyle: {
             borderRadius: 10,
+            color: '#74E67D',
+            shadowColor: '#74E67D',
+            shadowOffsetX: 5,
           },
-          emphasis: {
-            focus: 'series',
-          },
+          emphasis: {},
           data: [120],
         },
         {
-          name: 'Affiliate Ad',
+          name: 'Last month',
           type: 'bar',
           stack: 'total',
           label: {
@@ -85,14 +107,15 @@ export class AppComponent implements OnInit {
           },
           itemStyle: {
             borderRadius: 10,
+            color: '#F1B956',
+            shadowColor: '#F1B956',
+            shadowOffsetX: 5,
           },
-          emphasis: {
-            focus: 'series',
-          },
+          emphasis: {},
           data: [220],
         },
         {
-          name: 'Video Ad',
+          name: 'Last 2-3 months',
           type: 'bar',
           stack: 'total',
           barWidth: 10,
@@ -101,14 +124,15 @@ export class AppComponent implements OnInit {
           },
           itemStyle: {
             borderRadius: 10,
+            color: '#EF5D02',
+            shadowColor: '#EF5D02',
+            shadowOffsetX: 5,
           },
-          emphasis: {
-            focus: 'series',
-          },
+          emphasis: {},
           data: [150],
         },
         {
-          name: 'Search Engine',
+          name: '>90 days',
           type: 'bar',
           stack: 'total',
           barWidth: 10,
@@ -117,106 +141,16 @@ export class AppComponent implements OnInit {
           },
           itemStyle: {
             borderRadius: 10,
+            color: '#B11414',
+            shadowColor: '#B11414',
+            shadowOffsetX: 5,
           },
-          emphasis: {
-            focus: 'series',
-          },
-          data: [820],
+          emphasis: {},
+          data: [489],
         },
       ],
     };
 
     this.barchart.setOption(option);
-  }
-  private InitDonut(): void {
-    this.myChart = echarts.init(document.getElementById('donut') as any);
-
-    const option = {
-      legend: {
-        orient: 'horizontal',
-        x: 'left',
-        data: ['elem1', 'elem2', 'elem3', 'elem4', 'elem5'],
-        show: true,
-      },
-      width: 200,
-      series: [
-        {
-          name: 'NOMBRE',
-          type: 'pie',
-          radius: ['50%', '70%'],
-          avoidLabelOverlap: false,
-          label: {
-            normal: {
-              show: false,
-            },
-            emphasis: {
-              show: false,
-            },
-          },
-          itemStyle: {
-            borderRadius: [10, 10],
-          },
-          labelLine: {
-            normal: {
-              show: false,
-            },
-          },
-          data: [
-            { value: 335, name: 'elem1' },
-            { value: 310, name: 'elem2' },
-            { value: 234, name: 'elem3' },
-            { value: 135, name: 'elem4' },
-            { value: 538, name: 'elem5' },
-          ],
-        },
-      ],
-    };
-
-    this.myChart.setOption(option);
-  }
-
-  OnElem1Click() {
-    console.log('OnElem1Click');
-    this.myChart.dispatchAction({
-      type: 'highlight',
-      seriesIndex: 0,
-      dataIndex: 1,
-    });
-  }
-
-  OnElem1Mouseover() {
-    console.log('OnElem1Mouseover');
-    this.myChart.dispatchAction({
-      type: 'highlight',
-      seriesIndex: 0,
-      dataIndex: 1,
-    });
-  }
-
-  OnElem1Mouseout() {
-    console.log('OnElem1Mouseout');
-    this.myChart.dispatchAction({
-      type: 'downplay',
-      seriesIndex: 0,
-      dataIndex: 1,
-    });
-  }
-
-  OnElem2Mouseover() {
-    console.log('OnElem2Mouseover');
-    this.myChart.dispatchAction({
-      type: 'highlight',
-      seriesIndex: 0,
-      dataIndex: 2,
-    });
-  }
-
-  OnElem2Mouseout() {
-    console.log('OnElem2Mouseout');
-    this.myChart.dispatchAction({
-      type: 'downplay',
-      seriesIndex: 0,
-      dataIndex: 2,
-    });
   }
 }
